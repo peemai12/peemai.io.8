@@ -1,0 +1,369 @@
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Length Converter</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, "Tahoma", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #2563eb, #06b6d4);
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+        }
+
+        .swap-container {
+            display: flex;
+            justify-content: center;
+            margin: 5px 0 15px;
+        }
+
+        .swap-btn {
+            border: none;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 10px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .swap-btn:hover {
+            background: #bae6fd;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .convert-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .convert-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .clear-btn {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .clear-btn:hover {
+            background: #d1d5db;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .result-title {
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        #resultValue {
+            color: #1d4ed8;
+            font-size: 24px;
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        .error {
+            margin-top: 15px;
+            color: #dc2626;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #888;
+            font-size: 13px;
+        }
+
+        /* Responsive สำหรับมือถือ */
+        @media (max-width: 480px) {
+            .container {
+                padding: 22px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            #resultValue {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Length Converter</h1>
+        <p class="subtitle">เครื่องมือแปลงหน่วยวัดความยาว</p>
+
+        <!-- ช่องกรอกค่า -->
+        <div class="form-group">
+            <label for="value">ค่าที่ต้องการแปลง</label>
+            <input
+                type="number"
+                id="value"
+                placeholder="กรอกตัวเลข เช่น 10.5"
+                step="any"
+            >
+        </div>
+
+        <!-- หน่วยต้นทาง -->
+        <div class="form-group">
+            <label for="fromUnit">จากหน่วย</label>
+            <select id="fromUnit">
+                <option value="mm">มิลลิเมตร (mm)</option>
+                <option value="cm">เซนติเมตร (cm)</option>
+                <option value="m" selected>เมตร (m)</option>
+                <option value="km">กิโลเมตร (km)</option>
+                <option value="in">นิ้ว (in)</option>
+                <option value="ft">ฟุต (ft)</option>
+                <option value="yd">หลา (yd)</option>
+                <option value="mi">ไมล์ (mi)</option>
+            </select>
+        </div>
+
+        <!-- ปุ่มสลับหน่วย -->
+        <div class="swap-container">
+            <button class="swap-btn" onclick="swapUnits()">
+                ⇅ สลับหน่วย
+            </button>
+        </div>
+
+        <!-- หน่วยปลายทาง -->
+        <div class="form-group">
+            <label for="toUnit">ไปยังหน่วย</label>
+            <select id="toUnit">
+                <option value="mm">มิลลิเมตร (mm)</option>
+                <option value="cm">เซนติเมตร (cm)</option>
+                <option value="m">เมตร (m)</option>
+                <option value="km">กิโลเมตร (km)</option>
+                <option value="in">นิ้ว (in)</option>
+                <option value="ft" selected>ฟุต (ft)</option>
+                <option value="yd">หลา (yd)</option>
+                <option value="mi">ไมล์ (mi)</option>
+            </select>
+        </div>
+
+        <!-- ปุ่ม -->
+        <div class="buttons">
+            <button class="convert-btn" onclick="convertLength()">
+                แปลงหน่วย
+            </button>
+
+            <button class="clear-btn" onclick="clearForm()">
+                ล้างข้อมูล
+            </button>
+        </div>
+
+        <!-- ข้อความ Error -->
+        <div class="error" id="errorMessage"></div>
+
+        <!-- ผลลัพธ์ -->
+        <div class="result">
+            <div class="result-title">ผลลัพธ์</div>
+            <div id="resultValue">-</div>
+        </div>
+
+        <div class="footer">
+            พัฒนาด้วย HTML, CSS และ JavaScript
+        </div>
+
+    </div>
+
+    <script>
+        // ค่าการแปลงทุกหน่วยให้อยู่ในหน่วย "เมตร"
+        const conversionRates = {
+            mm: 0.001,
+            cm: 0.01,
+            m: 1,
+            km: 1000,
+            in: 0.0254,
+            ft: 0.3048,
+            yd: 0.9144,
+            mi: 1609.344
+        };
+
+        // ชื่อหน่วยสำหรับแสดงผล
+        const unitNames = {
+            mm: "มิลลิเมตร",
+            cm: "เซนติเมตร",
+            m: "เมตร",
+            km: "กิโลเมตร",
+            in: "นิ้ว",
+            ft: "ฟุต",
+            yd: "หลา",
+            mi: "ไมล์"
+        };
+
+        // ฟังก์ชันแปลงหน่วย
+        function convertLength() {
+
+            const valueInput = document.getElementById("value");
+            const fromUnit = document.getElementById("fromUnit").value;
+            const toUnit = document.getElementById("toUnit").value;
+            const resultValue = document.getElementById("resultValue");
+            const errorMessage = document.getElementById("errorMessage");
+
+            const value = parseFloat(valueInput.value);
+
+            // ตรวจสอบข้อมูล
+            if (valueInput.value === "" || isNaN(value)) {
+                errorMessage.textContent = "กรุณากรอกค่าตัวเลขที่ต้องการแปลง";
+                errorMessage.style.display = "block";
+                resultValue.textContent = "-";
+                return;
+            }
+
+            // ซ่อน Error
+            errorMessage.style.display = "none";
+
+            // แปลงค่าจากหน่วยต้นทางเป็นเมตร
+            const valueInMeters = value * conversionRates[fromUnit];
+
+            // แปลงจากเมตรเป็นหน่วยปลายทาง
+            const result = valueInMeters / conversionRates[toUnit];
+
+            // แสดงผล
+            resultValue.textContent =
+                `${formatNumber(value)} ${unitNames[fromUnit]}
+                = ${formatNumber(result)} ${unitNames[toUnit]}`;
+        }
+
+        // จัดรูปแบบตัวเลข
+        function formatNumber(number) {
+            return Number(number.toFixed(6)).toLocaleString("en-US");
+        }
+
+        // ฟังก์ชันสลับหน่วย
+        function swapUnits() {
+
+            const fromUnit = document.getElementById("fromUnit");
+            const toUnit = document.getElementById("toUnit");
+
+            const temp = fromUnit.value;
+
+            fromUnit.value = toUnit.value;
+            toUnit.value = temp;
+
+            // ถ้ามีค่าอยู่ ให้คำนวณใหม่ทันที
+            if (document.getElementById("value").value !== "") {
+                convertLength();
+            }
+        }
+
+        // ฟังก์ชันล้างข้อมูล
+        function clearForm() {
+
+            document.getElementById("value").value = "";
+            document.getElementById("fromUnit").value = "m";
+            document.getElementById("toUnit").value = "ft";
+            document.getElementById("resultValue").textContent = "-";
+            document.getElementById("errorMessage").style.display = "none";
+        }
+
+        // กด Enter เพื่อแปลงหน่วย
+        document.getElementById("value").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                convertLength();
+            }
+        });
+    </script>
+
+</body>
+</html>
+```
